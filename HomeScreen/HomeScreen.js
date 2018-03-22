@@ -66,6 +66,7 @@ export default class HomeScreen extends React.Component {
     this.onSwitchChange = this.handleOnSwitchChange.bind(this)
     this.onMenuPress = this.handleOnMenuPress.bind(this)
     this.connect = this.handleConnect.bind(this)
+    this.onFailure = this.handleOnFailure.bind(this)
   }
 
   handleOnConnect() {
@@ -93,6 +94,16 @@ export default class HomeScreen extends React.Component {
     if (client.isConnected()) client.publish('test', 'close', 0, false)
   }
 
+  handleOnFailure () {
+    // TODO: Send error message somewhere
+    Toast.show({
+      text: 'Oops! Failed to publish X(',
+      position: 'bottom',
+      buttonText: 'Okay',
+      type: 'danger'
+    })
+  }
+
   handleConnect () {
     if (client) client.disconnect()
     const userName = Config.GENKAN_USERNAME
@@ -102,7 +113,7 @@ export default class HomeScreen extends React.Component {
 
     client = new Paho.MQTT.Client(host, parseInt(port), 'gotestid');
     client.onConnectionLost = this.onConnectionLost;
-    client.connect({ onSuccess: this.onConnect, userName: userName, password: password, useSSL: true });
+    client.connect({ onSuccess: this.onConnect, onFailure: this.onFailure, userName: userName, password: password, useSSL: true });
     // TODO: Open Toast if connection success
   }
 
