@@ -63,6 +63,9 @@ export default class HomeScreen extends React.Component {
       isConnected: false,
       status: 'open',
     }
+
+    this.topicName = 'genkan/device/1'
+
     this.onConnect = this.handleOnConnect.bind(this)
     this.onConnectionLost = this.handleOnConnectionLost.bind(this)
     this.onSwitchChange = this.handleOnSwitchChange.bind(this)
@@ -90,11 +93,11 @@ export default class HomeScreen extends React.Component {
   }
 
   publishOpen () {
-    if (client.isConnected()) client.publish('test', 'open', 0, false)
+    if (client.isConnected()) client.publish(this.topicName, 'open', 0, false)
   }
 
   publishClose () {
-    if (client.isConnected()) client.publish('test', 'close', 0, false)
+    if (client.isConnected()) client.publish(this.topicName, 'close', 0, false)
   }
 
   handleOnFailure () {
