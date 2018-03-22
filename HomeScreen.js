@@ -1,21 +1,3 @@
-import React, { Component } from "react";
-import HomeScreen from "./src/HomeScreen/index.js";
-export default class App extends Component {
-  constructor() {
-    super();
-    this.state = {
-      isReady: false
-    };
-  }
-  async componentWillMount() {
-    this.setState({ isReady: true });
-  }
-  render() {
-    return <HomeScreen />;
-  }
-}
-
-/*
 import React, { Component } from 'react';
 import init from 'react_native_mqtt';
 import { AsyncStorage } from 'react-native';
@@ -51,8 +33,11 @@ import {
   Switch,
   H2
 } from 'native-base';
-import {Navigation} from 'react-native-navigation';
-import {registerScreens, registerScreenVisibilityListener} from './screens';
+import {
+  StackNavigator,
+  DrawerNavigator,
+  DrawerItems
+} from 'react-navigation';
 
 init({
   size: 10000,
@@ -67,7 +52,7 @@ init({
 let client
 
 type Props = {};
-export default class App extends Component<Props> {
+export default class HomeScreen extends React.Component {
   constructor(props) {
     super(props)
 
@@ -154,9 +139,10 @@ export default class App extends Component<Props> {
         <Container>
           <Header style={styles.header}>
             <Left>
-              <Button transparent>
-                <Icon name='menu' style={{color:'#000'}} onPress={()=>navigate('HomeNext')} />
-              </Button>
+            <Button
+              transparent
+              onPress={() => this.props.navigation.navigate("DrawerOpen")}>
+              <Icon name="menu" />
             </Left>
             <Body>
               <Title style={styles.title}>Genkan</Title>
@@ -241,4 +227,3 @@ const styles = StyleSheet.create({
     transform: [{ scaleX: 1.5 }, { scaleY: 1.5 }]
   }
 });
-*/
