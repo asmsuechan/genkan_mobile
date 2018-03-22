@@ -49,6 +49,8 @@ init({
   }
 });
 
+console.ignoredYellowBox = ['Remote debugger'];
+
 let client
 
 type Props = {};
@@ -74,7 +76,8 @@ export default class HomeScreen extends React.Component {
     Toast.show({
       text: 'Success to connect!',
       position: 'bottom',
-      buttonText: 'Okay'
+      buttonText: 'Okay',
+      type: 'success'
     })
     console.log("onConnect");
   }
