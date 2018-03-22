@@ -59,17 +59,22 @@ export default class HomeScreen extends React.Component {
     this.state = {
       message: '',
       isConnected: false,
-      showToast: false,
       status: 'open',
     }
     this.onConnect = this.handleOnConnect.bind(this)
     this.onConnectionLost = this.handleOnConnectionLost.bind(this)
     this.onSwitchChange = this.handleOnSwitchChange.bind(this)
     this.onMenuPress = this.handleOnMenuPress.bind(this)
+    this.connect = this.handleConnect.bind(this)
   }
 
   handleOnConnect() {
     this.setState({ isConnected: true })
+    Toast.show({
+      text: 'Success to connect!',
+      position: 'bottom',
+      buttonText: 'Okay'
+    })
     console.log("onConnect");
   }
 
@@ -88,8 +93,8 @@ export default class HomeScreen extends React.Component {
     if (client.isConnected()) client.publish('test', 'close', 0, false)
   }
 
-  connect () {
-    // TODO: Disconnect before connect
+  handleConnect () {
+    if (client) client.disconnect()
     const userName = Config.GENKAN_USERNAME
     const password = Config.GENKAN_PASSWORD
     const host = Config.GENKAN_HOST
@@ -138,63 +143,65 @@ export default class HomeScreen extends React.Component {
 
   render() {
     return (
-      <StyleProvider style={getTheme()}>
-        <Container>
-          <Header style={styles.header}>
-            <Left>
-              <Button
-                transparent
-                onPress={this.onMenuPress}>
-                <Icon name="menu" style={{color: '#000'}} />
-              </Button>
-            </Left>
-            <Body>
-              <Title style={styles.title}>Genkan</Title>
-            </Body>
-          </Header>
+      <Root>
+        <StyleProvider style={getTheme()}>
+          <Container>
+            <Header style={styles.header}>
+              <Left>
+                <Button
+                  transparent
+                  onPress={this.onMenuPress}>
+                  <Icon name="menu" style={{color: '#000'}} />
+                </Button>
+              </Left>
+              <Body>
+                <Title style={styles.title}>Genkan</Title>
+              </Body>
+            </Header>
 
-          <Content padder style={styles.content}>
-            <Grid style={styles.buttonsGrid}>
-              <Row style={styles.registeredKeyName}>
-                <H2>末永邸</H2>
-              </Row>
-              <Row>
-                <IconFA name={this.state.status === 'open' ? 'unlock' : 'lock'}
-                  size={30}
-                />
-              </Row>
-              <Row>
-                <Text>Current status: {this.state.status}</Text>
-              </Row>
+            <Content padder style={styles.content}>
+              <Grid style={styles.buttonsGrid}>
+                <Row style={styles.registeredKeyName}>
+                  <H2>末永邸</H2>
+                </Row>
+                <Row>
+                  <IconFA name={this.state.status === 'open' ? 'unlock' : 'lock'}
+                    size={30}
+                  />
+                </Row>
+                <Row>
+                  <Text>Current status: {this.state.status}</Text>
+                </Row>
 
-              <Row>
-                <Image source={{uri: 'https://cdn-groovy.s3-ap-northeast-1.amazonaws.com/production/articles/images/000/001/286/medium/bcc75b1f-7bd7-42e7-8b85-f4150eb1fb0a.jpg'}} style={{height: 200, width: null, flex: 1}}/>
-              </Row>
+                <Row>
+                  <Image source={{uri: 'https://cdn-groovy.s3-ap-northeast-1.amazonaws.com/production/articles/images/000/001/286/medium/bcc75b1f-7bd7-42e7-8b85-f4150eb1fb0a.jpg'}} style={{height: 200, width: null, flex: 1}}/>
+                </Row>
 
-              <Row>
-                <Switch value={this.isOpen()} onValueChange={this.onSwitchChange} style={styles.switch} />
-              </Row>
-            </Grid>
-          </Content>
+                <Row>
+                  <Switch value={this.isOpen()} onValueChange={this.onSwitchChange} style={styles.switch} />
+                </Row>
+              </Grid>
+            </Content>
 
-          <Footer style={styles.footer}>
-            <FooterTab style={styles.footer}>
-              <Button onClick={this.connect}>
-                <IconFA name="link"
-                  size={30}
-                />
-                <Text>Connect</Text>
-              </Button>
-              <Button>
-                <IconFA name="history"
-                  size={30}
-                />
-                <Text>History</Text>
-              </Button>
-            </FooterTab>
-          </Footer>
-        </Container>
-      </StyleProvider>
+            <Footer style={styles.footer}>
+              <FooterTab style={styles.footer}>
+                <Button onPress={this.connect}>
+                  <IconFA name="link"
+                    size={30}
+                  />
+                  <Text>Connect</Text>
+                </Button>
+                <Button>
+                  <IconFA name="history"
+                    size={30}
+                  />
+                  <Text>History</Text>
+                </Button>
+              </FooterTab>
+            </Footer>
+          </Container>
+        </StyleProvider>
+      </Root>
     );
   }
 }
