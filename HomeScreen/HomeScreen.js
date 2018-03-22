@@ -11,7 +11,10 @@ import {
   StyleSheet,
   View,
   Image,
-  TouchableHighlight
+  TouchableHighlight,
+  Animated,
+  TouchableWithoutFeedback,
+  TouchableOpacity
 } from 'react-native';
 import {
   Container,
@@ -62,16 +65,17 @@ export default class HomeScreen extends React.Component {
       message: '',
       isConnected: false,
       status: 'open',
+      keyDegree: new Animated.Value(0)
     }
 
     this.topicName = 'genkan/device/1'
 
     this.onConnect = this.handleOnConnect.bind(this)
     this.onConnectionLost = this.handleOnConnectionLost.bind(this)
-    this.onSwitchChange = this.handleOnSwitchChange.bind(this)
     this.onMenuPress = this.handleOnMenuPress.bind(this)
     this.connect = this.handleConnect.bind(this)
     this.onFailure = this.handleOnFailure.bind(this)
+    this.onPressKey = this.handleOnPressKey.bind(this)
   }
 
   handleOnConnect() {
@@ -128,17 +132,6 @@ export default class HomeScreen extends React.Component {
     // TODO: Set current state of the key in this.state.status
   }
 
-  handleOnSwitchChange () {
-    // TODO: send MQTT publish by the status
-    if (this.state.status === 'open') {
-      this.publishClose()
-      this.setState({ status: 'closed' })
-    } else {
-      this.publishOpen()
-      this.setState({ status: 'open' })
-    }
-  }
-
   isOpen () {
     return this.state.status === 'open'
   }
@@ -158,7 +151,44 @@ export default class HomeScreen extends React.Component {
     this.props.navigation.navigate("DrawerOpen")
   }
 
+  handleOnPressKey () {
+    if (this.state.isAnimating) return
+    // TODO: send MQTT publish by the status
+    if (this.state.status === 'open') {
+      this.publishClose()
+      this.setState({ status: 'closed' })
+    } else {
+      this.publishOpen()
+      this.setState({ status: 'open' })
+    }
+
+    // TODO: Make not working when it's animating
+    // Warning: the status is after changed current statusa
+    let fromValue, toValue
+    if (this.isOpen()) {
+      fromValue = 0
+      toValue = 1
+    } else {
+      fromValue = 1
+      toValue = 0
+    }
+
+	  this.state.keyDegree.setValue(fromValue)
+	  Animated.timing(
+	    this.state.keyDegree,
+	    {
+	      toValue: toValue,
+	      duration: 1500,
+	    }
+	  ).start()
+	}
+
   render() {
+    const keyDegree = this.state.keyDegree.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['270deg', '360deg']
+    })
+
     return (
       <Root>
         <StyleProvider style={getTheme()}>
@@ -182,20 +212,32 @@ export default class HomeScreen extends React.Component {
                   <H2>末永邸</H2>
                 </Row>
                 <Row>
-                  <IconFA name={this.state.status === 'open' ? 'unlock' : 'lock'}
-                    size={30}
-                  />
-                </Row>
-                <Row>
-                  <Text>Current status: {this.state.status}</Text>
-                </Row>
-
-                <Row>
                   <Image source={{uri: 'https://cdn-groovy.s3-ap-northeast-1.amazonaws.com/production/articles/images/000/001/286/medium/bcc75b1f-7bd7-42e7-8b85-f4150eb1fb0a.jpg'}} style={{height: 200, width: null, flex: 1}}/>
                 </Row>
 
                 <Row>
-                  <Switch value={this.isOpen()} onValueChange={this.onSwitchChange} style={styles.switch} />
+                  <Animated.View style={{height: 300, flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                    <TouchableWithoutFeedback>
+                      <Animated.View
+                        style={{
+                          backgroundColor: this.isOpen() ? '#f4f4f4' : '#5cb85c',
+                          width: 25,
+                          height: 200,
+                          transform: [{rotate: keyDegree}],
+                          position: 'relative'
+                        }}
+                      />
+                    </TouchableWithoutFeedback>
+                    <TouchableOpacity
+                      onPress={this.onPressKey}
+                      style={styles.keyCircle}
+                    >
+                      <IconFA name={this.isOpen() ? 'unlock' : 'lock'}
+                        size={40}
+                        style={styles.keyIcon}
+                      />
+                    </TouchableOpacity>
+                  </Animated.View>
                 </Row>
               </Grid>
             </Content>
@@ -265,5 +307,19 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  keyCircle: {
+    position: 'absolute',
+    borderWidth: 0,
+    borderColor: 'rgba(0,0,0,0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 70,
+    height: 70,
+    backgroundColor: '#f4f4f4',
+    borderRadius: 70,
+  },
+  keyIcon: {
+    position: 'absolute',
   }
 });
