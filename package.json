@@ -18,6 +18,7 @@
     "react-native-navigation": "^1.1.411",
     "react-native-paho-mqtt": "^0.1.1",
     "react-native-vector-icons": "^4.5.0",
+    "react-navigation": "^1.5.8",
     "react_native_mqtt": "^1.1.9"
   },
   "devDependencies": {

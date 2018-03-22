@@ -3,7 +3,7 @@ import init from 'react_native_mqtt';
 import { AsyncStorage } from 'react-native';
 import { Col, Row, Grid } from "react-native-easy-grid";
 import IconFA from 'react-native-vector-icons/FontAwesome';
-import getTheme from './native-base-theme/components';
+import getTheme from '../native-base-theme/components';
 import Config from 'react-native-config';
 
 import {
@@ -65,6 +65,7 @@ export default class HomeScreen extends React.Component {
     this.onConnect = this.handleOnConnect.bind(this)
     this.onConnectionLost = this.handleOnConnectionLost.bind(this)
     this.onSwitchChange = this.handleOnSwitchChange.bind(this)
+    this.onMenuPress = this.handleOnMenuPress.bind(this)
   }
 
   handleOnConnect() {
@@ -131,18 +132,21 @@ export default class HomeScreen extends React.Component {
     ),
   });
 
-  render() {
-    const { navigate } = this.props.navigation;
+  handleOnMenuPress () {
+    this.props.navigation.navigate("DrawerOpen")
+  }
 
+  render() {
     return (
       <StyleProvider style={getTheme()}>
         <Container>
           <Header style={styles.header}>
             <Left>
-            <Button
-              transparent
-              onPress={() => this.props.navigation.navigate("DrawerOpen")}>
-              <Icon name="menu" />
+              <Button
+                transparent
+                onPress={this.onMenuPress}>
+                <Icon name="menu" style={{color: '#000'}} />
+              </Button>
             </Left>
             <Body>
               <Title style={styles.title}>Genkan</Title>
