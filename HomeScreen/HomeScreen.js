@@ -155,16 +155,22 @@ export default class HomeScreen extends React.Component {
 
           <Content padder style={styles.content}>
             <Grid style={styles.buttonsGrid}>
-              <Row style={{height: 80}}>
+              <Row style={styles.registeredKeyName}>
                 <H2>末永邸</H2>
               </Row>
+              <Row>
+                <IconFA name={this.state.status === 'open' ? 'unlock' : 'lock'}
+                  size={30}
+                />
+              </Row>
+              <Row>
+                <Text>Current status: {this.state.status}</Text>
+              </Row>
+
               <Row>
                 <Image source={{uri: 'https://cdn-groovy.s3-ap-northeast-1.amazonaws.com/production/articles/images/000/001/286/medium/bcc75b1f-7bd7-42e7-8b85-f4150eb1fb0a.jpg'}} style={{height: 200, width: null, flex: 1}}/>
               </Row>
 
-              <Row>
-                <Text>Current status: {this.state.status}</Text>
-              </Row>
               <Row>
                 <Switch value={this.isOpen()} onValueChange={this.onSwitchChange} style={styles.switch} />
               </Row>
@@ -229,5 +235,11 @@ const styles = StyleSheet.create({
   switch: {
     height: 200,
     transform: [{ scaleX: 1.5 }, { scaleY: 1.5 }]
+  },
+  registeredKeyName: {
+    height: 60,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 });
