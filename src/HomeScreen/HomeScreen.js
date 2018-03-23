@@ -3,7 +3,7 @@ import init from 'react_native_mqtt';
 import { AsyncStorage } from 'react-native';
 import { Col, Row, Grid } from "react-native-easy-grid";
 import IconFA from 'react-native-vector-icons/FontAwesome';
-import getTheme from '../native-base-theme/components';
+import getTheme from '../../native-base-theme/components';
 import Config from 'react-native-config';
 
 import {
@@ -105,6 +105,7 @@ export default class HomeScreen extends React.Component {
   }
 
   handleOnFailure () {
+    debugger
     // TODO: Send error message somewhere
     Toast.show({
       text: 'Oops! Failed to publish X(',
