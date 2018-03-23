@@ -5,6 +5,7 @@ import { Col, Row, Grid } from "react-native-easy-grid";
 import IconFA from 'react-native-vector-icons/FontAwesome';
 import getTheme from '../../native-base-theme/components';
 import Config from 'react-native-config';
+import { getUsername } from '../store'
 
 import {
   Platform,
@@ -64,6 +65,7 @@ export default class HomeScreen extends React.Component {
     this.state = {
       status: 'open',
       keyDegree: new Animated.Value(0),
+      username: ''
     }
 
     this.topicName = 'genkan/device/1'
@@ -74,6 +76,8 @@ export default class HomeScreen extends React.Component {
     this.connect = this.handleConnect.bind(this)
     this.onFailure = this.handleOnFailure.bind(this)
     this.onPressKey = this.handleOnPressKey.bind(this)
+    this.setUsername = this.setUsernameHandler.bind(this)
+    this.onSettingButtonPress = this.handleOnSettingButtonPress.bind(this)
   }
 
   handleOnConnect() {
@@ -114,6 +118,7 @@ export default class HomeScreen extends React.Component {
   }
 
   componentDidMount () {
+    this.setUsername()
     this.connect()
     // TODO: Set current state of the key in this.state.status
   }
@@ -169,6 +174,16 @@ export default class HomeScreen extends React.Component {
 	  ).start()
 	}
 
+  setUsernameHandler () {
+    getUsername().then(res => {
+      this.setState({username: res.username})
+    })
+  }
+
+  handleOnSettingButtonPress () {
+    this.props.navigation.navigate('Edit')
+  }
+
   render() {
     const keyDegree = this.state.keyDegree.interpolate({
         inputRange: [0, 1],
@@ -195,7 +210,7 @@ export default class HomeScreen extends React.Component {
             <Content padder style={styles.content}>
               <Grid style={styles.buttonsGrid}>
                 <Row style={styles.registeredKeyName}>
-                  <H2>末永邸</H2>
+                  <H2>{this.state.username}</H2>
                 </Row>
                 <Row>
                   <Image source={{uri: 'https://cdn-groovy.s3-ap-northeast-1.amazonaws.com/production/articles/images/000/001/286/medium/bcc75b1f-7bd7-42e7-8b85-f4150eb1fb0a.jpg'}} style={{height: 200, width: null, flex: 1}}/>
@@ -236,11 +251,11 @@ export default class HomeScreen extends React.Component {
                   />
                   <Text>Connect</Text>
                 </Button>
-                <Button>
-                  <IconFA name="history"
+                <Button onPress={this.onSettingButtonPress}>
+                  <IconFA name="gear"
                     size={30}
                   />
-                  <Text>History</Text>
+                  <Text>Setting</Text>
                 </Button>
               </FooterTab>
             </Footer>
