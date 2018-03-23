@@ -6,6 +6,7 @@ import IconFA from 'react-native-vector-icons/FontAwesome';
 import getTheme from '../../native-base-theme/components';
 import Config from 'react-native-config';
 import { getKeyname, getKeyIcon } from '../store'
+import BleManager from 'react-native-ble-manager';
 
 import {
   Platform,
@@ -16,7 +17,10 @@ import {
   Animated,
   TouchableWithoutFeedback,
   TouchableOpacity,
-  ToastAndroid
+  ToastAndroid,
+  PermissionsAndroid,
+  NativeModules,
+  NativeEventEmitter
 } from 'react-native';
 import {
   Container,
@@ -58,6 +62,9 @@ console.ignoredYellowBox = ['Remote debugger'];
 
 let client
 
+const BleManagerModule = NativeModules.BleManager;
+const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
+
 type Props = {};
 export default class HomeScreen extends React.Component {
   constructor(props) {
@@ -67,7 +74,9 @@ export default class HomeScreen extends React.Component {
       status: 'open',
       keyDegree: new Animated.Value(1),
       keyname: '',
-      keyIconURL: ''
+      keyIconURL: '',
+      scanning: false,
+      peripherals: [],
     }
 
     this.topicName = 'genkan/devices/1'
@@ -81,6 +90,8 @@ export default class HomeScreen extends React.Component {
     this.setKeyname = this.setKeynameHandler.bind(this)
     this.setKeyIcon = this.setKeyIconHandler.bind(this)
     this.onSettingButtonPress = this.handleOnSettingButtonPress.bind(this)
+
+    this.handleDiscoverPeripheral = this.handleDiscoverPeripheral.bind(this);
   }
 
   handleOnConnect() {
@@ -128,6 +139,53 @@ export default class HomeScreen extends React.Component {
   componentDidMount () {
     this.connect()
     // TODO: Set current state of the key in this.state.status
+
+    BleManager.start({showAlert: false});
+    this.handlerDiscover = bleManagerEmitter.addListener('BleManagerDiscoverPeripheral', this.handleDiscoverPeripheral );
+
+    PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION).then((result) => {
+      if (result) {
+        console.log("Permission is OK");
+      } else {
+        PermissionsAndroid.requestPermission(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION).then((result) => {
+          if (result) {
+            console.log("User accept");
+          } else {
+            console.log("User refuse");
+          }
+        });
+      }
+    });
+  }
+
+  startScan() {
+    if (!this.state.scanning) {
+      this.setState({peripherals: new Map()});
+      BleManager.scan([], 3, true).then((results) => {
+        console.log('Scanning...');
+        this.setState({scanning: true});
+      });
+    }
+
+    BleManager.getConnectedPeripherals([]).then((results) => {
+      console.log(results);
+      var peripherals = this.state.peripherals;
+      for (var i = 0; i < results.length; i++) {
+        var peripheral = results[i];
+        peripheral.connected = true;
+        peripherals.set(peripheral.id, peripheral);
+        this.setState({ peripherals });
+      }
+    });
+  }
+
+  handleDiscoverPeripheral(peripheral){
+    var peripherals = this.state.peripherals;
+    if (!peripherals.has(peripheral.id)){
+      console.log('Got ble peripheral', peripheral);
+      peripherals.set(peripheral.id, peripheral);
+      this.setState({ peripherals })
+    }
   }
 
   isOpen () {
@@ -285,7 +343,7 @@ export default class HomeScreen extends React.Component {
 
             <Footer style={styles.footer}>
               <FooterTab style={styles.footer}>
-                <Button onPress={this.connect}>
+                <Button onPress={() => this.startScan()}>
                   <IconFA name="bluetooth"
                     size={30}
                   />

@@ -101,7 +101,7 @@ android {
 
     defaultConfig {
         applicationId "com.genkan_mobile"
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
@@ -139,6 +139,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-ble-manager')
     compile project(':react-native-navigation')
     compile project(':react-native-config')
     compile project(':react-native-vector-icons')
