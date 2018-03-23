@@ -14,7 +14,8 @@ import {
   TouchableHighlight,
   Animated,
   TouchableWithoutFeedback,
-  TouchableOpacity
+  TouchableOpacity,
+  ToastAndroid
 } from 'react-native';
 import {
   Container,
@@ -31,7 +32,6 @@ import {
   Footer,
   FooterTab,
   Root,
-  Toast,
   StyleProvider,
   Switch,
   H2
@@ -62,10 +62,8 @@ export default class HomeScreen extends React.Component {
     super(props)
 
     this.state = {
-      message: '',
-      isConnected: false,
       status: 'open',
-      keyDegree: new Animated.Value(0)
+      keyDegree: new Animated.Value(0),
     }
 
     this.topicName = 'genkan/device/1'
@@ -79,18 +77,11 @@ export default class HomeScreen extends React.Component {
   }
 
   handleOnConnect() {
-    this.setState({ isConnected: true })
-    Toast.show({
-      text: 'Success to connect!',
-      position: 'bottom',
-      buttonText: 'Okay',
-      type: 'success'
-    })
+    ToastAndroid.show('Success to connect!', ToastAndroid.SHORT);
     console.log("onConnect");
   }
 
   handleOnConnectionLost(responseObject) {
-    this.setState({ isConnected: false, message: 'Connection lost!' })
     if (responseObject.errorCode !== 0) {
       console.log("onConnectionLost:"+responseObject.errorMessage);
     }
@@ -105,18 +96,12 @@ export default class HomeScreen extends React.Component {
   }
 
   handleOnFailure () {
-    debugger
     // TODO: Send error message somewhere
-    Toast.show({
-      text: 'Oops! Failed to publish X(',
-      position: 'bottom',
-      buttonText: 'Okay',
-      type: 'danger'
-    })
+    ToastAndroid.show('Oops! Failed to publish X(', ToastAndroid.SHORT);
   }
 
   handleConnect () {
-    if (client) client.disconnect()
+    if (client && client.isConnected()) client.disconnect()
     const userName = Config.GENKAN_USERNAME
     const password = Config.GENKAN_PASSWORD
     const host = Config.GENKAN_HOST
@@ -153,7 +138,7 @@ export default class HomeScreen extends React.Component {
   }
 
   handleOnPressKey () {
-    if (this.state.isAnimating) return
+    if (!client || !client.isConnected()) return
     // TODO: send MQTT publish by the status
     if (this.state.status === 'open') {
       this.publishClose()
@@ -179,7 +164,7 @@ export default class HomeScreen extends React.Component {
 	    this.state.keyDegree,
 	    {
 	      toValue: toValue,
-	      duration: 1500,
+	      duration: 1000,
 	    }
 	  ).start()
 	}
