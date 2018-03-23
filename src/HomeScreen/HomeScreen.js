@@ -35,7 +35,8 @@ import {
   Root,
   StyleProvider,
   Switch,
-  H2
+  H2,
+  Right
 } from 'native-base';
 import {
   StackNavigator,
@@ -64,12 +65,12 @@ export default class HomeScreen extends React.Component {
 
     this.state = {
       status: 'open',
-      keyDegree: new Animated.Value(0),
+      keyDegree: new Animated.Value(1),
       keyname: '',
       keyIconURL: ''
     }
 
-    this.topicName = 'genkan/device/1'
+    this.topicName = 'genkan/devices/1'
 
     this.onConnect = this.handleOnConnect.bind(this)
     this.onConnectionLost = this.handleOnConnectionLost.bind(this)
@@ -163,11 +164,11 @@ export default class HomeScreen extends React.Component {
     // Warning: the status is after changed current statusa
     let fromValue, toValue
     if (this.isOpen()) {
-      fromValue = 0
-      toValue = 1
-    } else {
       fromValue = 1
       toValue = 0
+    } else {
+      fromValue = 0
+      toValue = 1
     }
 
 	  this.state.keyDegree.setValue(fromValue)
@@ -254,16 +255,41 @@ export default class HomeScreen extends React.Component {
                     </TouchableOpacity>
                   </Animated.View>
                 </Row>
+                <Row size={2}>
+                  <Col size={1}>
+                    <Left>
+                    <TouchableOpacity
+                      onPress={this.connect}
+                      style={styles.linkCircle}
+                    >
+                      <IconFA name='link'
+                        size={30}
+                        style={styles.link}
+                      />
+                    </TouchableOpacity>
+                    </Left>
+                  </Col>
+                  <Col size={1}>
+                  </Col>
+                  <Col size={1}>
+                    <Right>
+                      <IconFA name='history'
+                        size={30}
+                        style={styles.history}
+                      />
+                    </Right>
+                  </Col>
+                </Row>
               </Grid>
             </Content>
 
             <Footer style={styles.footer}>
               <FooterTab style={styles.footer}>
                 <Button onPress={this.connect}>
-                  <IconFA name="link"
+                  <IconFA name="bluetooth"
                     size={30}
                   />
-                  <Text>Connect</Text>
+                  <Text>BLE</Text>
                 </Button>
                 <Button onPress={this.onSettingButtonPress}>
                   <IconFA name="gear"
@@ -336,5 +362,24 @@ const styles = StyleSheet.create({
   },
   keyIcon: {
     position: 'absolute',
+  },
+  linkCircle: {
+    borderWidth: 0,
+    borderColor: 'rgba(0,0,0,0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 40,
+    height: 40,
+    backgroundColor: '#f4f4f4',
+    borderRadius: 40,
+  },
+  link: {
+    position: 'absolute'
+  },
+  history: {
+    backgroundColor: '#fff',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 });
