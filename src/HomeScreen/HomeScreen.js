@@ -5,7 +5,7 @@ import { Col, Row, Grid } from "react-native-easy-grid";
 import IconFA from 'react-native-vector-icons/FontAwesome';
 import getTheme from '../../native-base-theme/components';
 import Config from 'react-native-config';
-import { getUsername } from '../store'
+import { getKeyname } from '../store'
 
 import {
   Platform,
@@ -65,7 +65,7 @@ export default class HomeScreen extends React.Component {
     this.state = {
       status: 'open',
       keyDegree: new Animated.Value(0),
-      username: ''
+      keyname: ''
     }
 
     this.topicName = 'genkan/device/1'
@@ -76,7 +76,7 @@ export default class HomeScreen extends React.Component {
     this.connect = this.handleConnect.bind(this)
     this.onFailure = this.handleOnFailure.bind(this)
     this.onPressKey = this.handleOnPressKey.bind(this)
-    this.setUsername = this.setUsernameHandler.bind(this)
+    this.setKeyname = this.setKeynameHandler.bind(this)
     this.onSettingButtonPress = this.handleOnSettingButtonPress.bind(this)
   }
 
@@ -118,7 +118,7 @@ export default class HomeScreen extends React.Component {
   }
 
   componentDidMount () {
-    this.setUsername()
+    this.setKeyname()
     this.connect()
     // TODO: Set current state of the key in this.state.status
   }
@@ -174,9 +174,9 @@ export default class HomeScreen extends React.Component {
 	  ).start()
 	}
 
-  setUsernameHandler () {
-    getUsername().then(res => {
-      this.setState({username: res.username})
+  setKeynameHandler () {
+    getKeyname().then(res => {
+      this.setState({keyname: res.keyname})
     })
   }
 
@@ -210,7 +210,7 @@ export default class HomeScreen extends React.Component {
             <Content padder style={styles.content}>
               <Grid style={styles.buttonsGrid}>
                 <Row style={styles.registeredKeyName}>
-                  <H2>{this.state.username}</H2>
+                  <H2>{this.state.keyname}</H2>
                 </Row>
                 <Row>
                   <Image source={{uri: 'https://cdn-groovy.s3-ap-northeast-1.amazonaws.com/production/articles/images/000/001/286/medium/bcc75b1f-7bd7-42e7-8b85-f4150eb1fb0a.jpg'}} style={{height: 200, width: null, flex: 1}}/>

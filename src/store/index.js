@@ -1,17 +1,17 @@
 import store from 'react-native-simple-store';
 
-const usernameStorageKey = '@GenkanMobile:username'
+const keynameStorageKey = '@GenkanMobile:username'
 
-export function getUsername () {
-  return store.get(usernameStorageKey)
+export function getKeyname () {
+  return store.get(keynameStorageKey)
 }
 
-export function setUsername (username) {
-  return store.save(usernameStorageKey, {
-  	username: username
+export function setKeyname (keyname) {
+  return store.save(keynameStorageKey, {
+    keyname: keyname
   })
 }
 export default {
-  getUsername,
-  setUsername
+  getKeyname,
+  setKeyname
 }
