@@ -1,6 +1,7 @@
 import store from 'react-native-simple-store';
 
-const keynameStorageKey = '@GenkanMobile:username'
+const keynameStorageKey = '@GenkanMobile:keyname'
+const keyIconStorageKey = '@GenkanMobile:keiIcon'
 
 export function getKeyname () {
   return store.get(keynameStorageKey)
@@ -11,7 +12,20 @@ export function setKeyname (keyname) {
     keyname: keyname
   })
 }
+
+export function getKeyIcon () {
+  return store.get(keyIconStorageKey)
+}
+
+export function setKeyIcon (keyIcon) {
+  return store.save(keyIconStorageKey, {
+    keyIcon: keyIcon
+  })
+}
+
 export default {
   getKeyname,
-  setKeyname
+  setKeyname,
+  getKeyIcon,
+  setKeyIcon
 }
