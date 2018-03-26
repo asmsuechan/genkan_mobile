@@ -255,6 +255,10 @@ export default class HomeScreen extends React.Component {
     this.props.navigation.navigate('Edit')
   }
 
+  handleOnHistoryButtonPress () {
+    this.props.navigation.navigate('History')
+  }
+
   render() {
     const keyDegree = this.state.keyDegree.interpolate({
         inputRange: [0, 1],
@@ -331,10 +335,15 @@ export default class HomeScreen extends React.Component {
                   </Col>
                   <Col size={1}>
                     <Right>
-                      <IconFA name='history'
-                        size={30}
-                        style={styles.history}
-                      />
+                      <TouchableOpacity
+                        onPress={() => this.handleOnHistoryButtonPress()}
+                        style={styles.linkCircle}
+                      >
+                        <IconFA name='history'
+                          size={30}
+                          style={styles.history}
+                        />
+                      </TouchableOpacity>
                     </Right>
                   </Col>
                 </Row>
@@ -434,8 +443,18 @@ const styles = StyleSheet.create({
   link: {
     position: 'absolute'
   },
+  historyCircle: {
+    borderWidth: 0,
+    borderColor: 'rgba(0,0,0,0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 40,
+    height: 40,
+    backgroundColor: '#f4f4f4',
+    borderRadius: 40,
+  },
   history: {
-    backgroundColor: '#fff',
+    position: 'absolute',
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center'
