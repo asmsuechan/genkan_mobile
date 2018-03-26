@@ -25,16 +25,26 @@ export default class HistoryScreen extends React.Component {
       events: [],
       isFetched: false
     }
+
+    this.handleFetch = this.fetchHandler.bind(this)
   }
 
   componentDidMount () {
-		firebase.database()
-		  .ref('devices/1/history')
-		  .on('value', (snapshot) => {
-        const keys = Object.keys(snapshot.val());
-        const events = keys.map((v) => { return snapshot.val()[v]; });
-        this.setState({ events: events, isFetched: true })
-		  });
+    firebase.database()
+      .ref('devices/1/history')
+      .on('value', this.handleFetch);
+  }
+
+  componentWillUnmount () {
+    firebase.database()
+      .ref('devices/1/history')
+      .off('value', this.handleFetch);
+  }
+
+  fetchHandler (snapshot) {
+    const keys = Object.keys(snapshot.val());
+    const events = keys.map((v) => { return snapshot.val()[v]; });
+    this.setState({ events: events, isFetched: true })
   }
 
   static navigationOptions = ({ navigation }) => ({
