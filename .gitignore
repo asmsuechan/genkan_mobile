@@ -53,3 +53,4 @@ buck-out/
 */fastlane/screenshots
 
 .env
+android/app/google-services.json
